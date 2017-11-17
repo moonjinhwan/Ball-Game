@@ -16,9 +16,15 @@ import inputbox
 
 import random
 import pygame
+import time
 
 def main():
     pygame.init()
+    global jump_sound
+    Jump_sound = pygame.mixer.Sound('Jump.wav')
+    pygame.mixer.music.load('spelunk.mp3')
+    pygame.mixer.music.play(-1)
+
     
     try:
         w = 640
@@ -122,9 +128,12 @@ def main():
             # Update collision handler
             if ch.update():
                 score += 1
+                pygame.mixer.Sound.play(Jump_sound)
+                
                 
             # Draw background
             screen.fill((0, 0, 0))
+            
             
             # Draw walls
             for wall in walls:
@@ -136,6 +145,7 @@ def main():
             # Draw balls
             for ball in balls:
                 ball.draw()
+                 
 
             #Draw scoreboard
             if run:
@@ -148,6 +158,7 @@ def main():
             if time >= screen.get_width():
                 time = 0
                 action = random.randint(0, 2) # Randomize action
+                paddle.levelup()
                 
                 if action == 0 or action == 1:
                     # Add new ball
@@ -204,6 +215,8 @@ def main():
 
             clock.tick(60)
             
+
+        
     finally:
         pygame.quit()
         
