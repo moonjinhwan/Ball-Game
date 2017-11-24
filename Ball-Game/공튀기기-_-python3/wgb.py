@@ -35,7 +35,6 @@ def main():
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         ch = CollisionHandler()
-
         TIMEEVENT = USEREVENT + 1
         pygame.time.set_timer(TIMEEVENT, 15)
 
@@ -92,7 +91,12 @@ def main():
                 if event.type == KEYUP:
                     if event.key == K_i:
                         pause = not pause
-                        
+                    if event.key == K_RIGHT:
+                        a=30
+                        paddle.update2(a)
+                    elif event.key == K_LEFT:     
+                        a=-30
+                        paddle.update2(a)   
                     if event.key == K_SPACE and not(run):
                         run = True
                         gameover = False
@@ -123,7 +127,7 @@ def main():
                         lifes -= 1
             
             # Update positions for paddle
-            paddle.update()
+            
 
             # Update collision handler
             if ch.update():
