@@ -24,9 +24,13 @@ class Paddle:
     def draw(self):
         pygame.draw.rect(self.surface, self.color, (self.x, self.y, self.w, self.h))
    
-    def update2(self, a):
+    def update2(self, a):#키 입력을 받은 후 변수들 값을 업데이트
         self.x_change=a
-        self.x=self.x+self.x_change
+        self.x+=self.x_change
+        if self.x + self.w >= self.surface.get_width()-10: #양쪽 경계선 밖으로 못 나감
+            self.x = self.surface.get_width() - self.w - 10 
+        if self.x < 10: 
+            self.x = 10 
 
     def levelup(self):
         self.w = self.w - 20

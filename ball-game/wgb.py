@@ -11,7 +11,7 @@ from ball import *
 from collisionhandler import *
 from wall import *
 from highscore import *
-
+from loding import *
 import inputbox
 
 import random
@@ -68,12 +68,14 @@ def main():
 
         # Initialize highscore
         highscore = Highscore(screen)
-		
+
+        loding = Loding(screen)
         # Load scoreboard
         scoreBoard = font.render("Life: " + str(lifes) + " Score: ", True, (255, 0, 0))
-        
+        ##################################################################
+       
         while not gameover:
-        
+
             # Check for quits
             for event in pygame.event.get():
                 
@@ -88,14 +90,14 @@ def main():
                     time += 1
                 
                 # Key presses
-                if event.type == KEYUP:
+                if event.type == KEYDOWN:
                     if event.key == K_i:
                         pause = not pause
                     if event.key == K_RIGHT:
-                        a=30
+                        a=50
                         paddle.update2(a)
-                    elif event.key == K_LEFT:     
-                        a=-30
+                    elif event.key == K_LEFT:    
+                        a=-50
                         paddle.update2(a)   
                     if event.key == K_SPACE and not(run):
                         run = True
@@ -143,7 +145,7 @@ def main():
             for wall in walls:
                 wall.draw()
                 
-            # Draw paddle
+            # Draw paddle  
             paddle.draw()    
             
             # Draw balls
