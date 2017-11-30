@@ -7,16 +7,18 @@
 #
 
 from paddle import *
+from item import *
 from ball import *
 from collisionhandler import *
+from collisionhandleritems import *
 from wall import *
 from highscore import *
 from loding import *
 import inputbox
-
 import random
 import pygame
 import time
+
 
 def main():
     pygame.init()
@@ -35,6 +37,7 @@ def main():
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         ch = CollisionHandler()
+        chitem=CollisionHandlerItems()
         TIMEEVENT = USEREVENT + 1
         pygame.time.set_timer(TIMEEVENT, 15)
 
@@ -42,7 +45,10 @@ def main():
         balls = Ball.createRandomBallsAsList(3, screen)
         for ball in balls:
             ch.addBall(ball)
-
+        #item handlerhandler
+        items=Item.createRandomItemsAsList(1,screen)
+        for item in items:
+            chitem.addItem(item)
         # Insert walls and add them to collision handler
         walls = [
             Wall( screen, (0,30), (10, screen.get_height()) ), # Left wall
@@ -51,11 +57,11 @@ def main():
         ]
         for wall in walls:
             ch.addObject(wall)
-        
+            chitem.addObject(wall)
         # Create paddle and add it to collision handler
         paddle = Paddle(screen)
         ch.addObject(paddle)
-        
+        chitem.addObject(paddle)
         # Game variables
         run = True
         pause = False
@@ -110,24 +116,32 @@ def main():
                         pygame.time.set_timer(TIMEEVENT, 15)
                         
                         ch.reset()
-                        
+                        chitem.reset()
                         walls = walls[0:3]
                         for wall in walls:
                             ch.addObject(wall)
+                            chitem.addObject(wall)
                         ch.addObject(paddle)
-                        
+                        chitem.addObject(paddle)
                         # Load our balls and add them to collision handler
                         balls = Ball.createRandomBallsAsList(3, screen)
                         
                         for ball in balls:
                             ch.addBall(ball)
-            
+
+                        items=Item.createRandomItemsAsList(1,screen)
+
+                        for item in items:
+                            chitem.addItem(item)
             if not pause:
                 # Update positions for balls
                 for ball in balls: 
                     if ball.update(): # Returns true if ball goes below paddle-level
                         lifes -= 1
-            
+
+                for item in items:
+                    if item.update():
+                        lifes +=1
             # Update positions for paddle
             
 
@@ -136,7 +150,8 @@ def main():
                 score += 1
                 pygame.mixer.Sound.play(Jump_sound)
                 
-                
+            if chitem.update():
+                pygame.mixer.Sound.play(Jump_sound)    
             # Draw background
             screen.fill((0, 0, 0))
             
@@ -151,7 +166,9 @@ def main():
             # Draw balls
             for ball in balls:
                 ball.draw()
-                 
+
+            for item in items:
+                item.draw()     
 
             #Draw scoreboard
             if run:
@@ -171,8 +188,10 @@ def main():
                     balls.append(ch.addBall(Ball(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
                 elif action == 2:
                     # Add new wall, vertical or horizontal
+                    
                     if random.randint(0, 1):
                         walls.append(ch.addObject(Wall(screen, (random.randint(50, 550), random.randint(50, 200)), (200,10) )))
+                        items.append(chitem.addItem(Item(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
                     else:
                         walls.append(ch.addObject(Wall(screen, (random.randint(50, 550), random.randint(50, 200)), (10,200) )))
                     # Add bonus item here

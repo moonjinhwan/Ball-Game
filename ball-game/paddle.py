@@ -18,9 +18,7 @@ class Paddle:
         self.w = 200
         self.h = 10
         self.color = 165, 102, 255
-  
-       
-                              
+                            
     def draw(self):
         pygame.draw.rect(self.surface, self.color, (self.x, self.y, self.w, self.h))
    
@@ -33,4 +31,7 @@ class Paddle:
             self.x = 10 
 
     def levelup(self):
-        self.w = self.w - 20
+        if self.w!=100:
+            self.w = self.w - 20
+        else:
+            self.w=100    
