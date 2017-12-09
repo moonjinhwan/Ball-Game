@@ -9,7 +9,6 @@ from itemcollisionhandler1 import *
 from itemcollisionhandler2 import *
 
 import inputbox
-
 import random
 import pygame
 import time
@@ -20,7 +19,6 @@ def main():
     Jump_sound = pygame.mixer.Sound('Jump.wav')
     pygame.mixer.music.load('spelunk.mp3')
     pygame.mixer.music.play(-1)
-
     
     try:
         w = 640
@@ -58,7 +56,6 @@ def main():
             Wall( screen, (0,30), (screen.get_width(), 10) ) # Top wall
         ]
 
-        
         for wall in walls:
             ch.addObject(wall)
             itch1.addObject(wall)
@@ -280,8 +277,6 @@ def main():
 
             clock.tick(60)
             
-
-        
     finally:
         pygame.quit()
         
