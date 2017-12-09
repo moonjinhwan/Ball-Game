@@ -26,7 +26,7 @@ class Ball:
         self.y = y
         self.vx = vx
         self.vy = vy
-        self.color = 255, 0, 0
+        self.color = 0,0,255
         self.radius = 5
         self.active = True
         

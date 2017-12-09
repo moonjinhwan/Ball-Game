@@ -1,24 +1,18 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-#
-# Multimediaprogrammering i Python ST2010
-# written by Jonatan Jansson, Anders Hassis & Johan Nenzén
-# using Python 2.6.4
-#
-
 from paddle import *
-from item import *
 from ball import *
 from collisionhandler import *
-from collisionhandleritems import *
 from wall import *
 from highscore import *
-from loding import *
+from greenitem import *
+from reditem import *
+from itemcollisionhandler1 import *
+from itemcollisionhandler2 import *
+
 import inputbox
+
 import random
 import pygame
 import time
-
 
 def main():
     pygame.init()
@@ -37,7 +31,9 @@ def main():
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         ch = CollisionHandler()
-        chitem=CollisionHandlerItems()
+        itch1 = itemCollisionHandler1()
+        itch2 = itemCollisionHandler2()
+
         TIMEEVENT = USEREVENT + 1
         pygame.time.set_timer(TIMEEVENT, 15)
 
@@ -45,23 +41,35 @@ def main():
         balls = Ball.createRandomBallsAsList(3, screen)
         for ball in balls:
             ch.addBall(ball)
-        #item handlerhandler
-        items=Item.createRandomItemsAsList(1,screen)
-        for item in items:
-            chitem.addItem(item)
+
+        greenitems = Greenitem.createRandomItemsAsList1(1, screen)
+        for greenitem in greenitems:
+            itch1.addGreenitem(greenitem)
+
+        reditems = Reditem.createRandomItemsAsList2(1, screen)
+        for reditem in reditems:
+            itch2.addReditem(reditem)
+            
+
         # Insert walls and add them to collision handler
         walls = [
             Wall( screen, (0,30), (10, screen.get_height()) ), # Left wall
             Wall( screen, (screen.get_width()-10,30), (10, screen.get_height()) ), # Right wall
             Wall( screen, (0,30), (screen.get_width(), 10) ) # Top wall
         ]
+
+        
         for wall in walls:
             ch.addObject(wall)
-            chitem.addObject(wall)
+            itch1.addObject(wall)
+            itch2.addObject(wall)
+        
         # Create paddle and add it to collision handler
         paddle = Paddle(screen)
         ch.addObject(paddle)
-        chitem.addObject(paddle)
+        itch1.addObject(paddle)
+        itch2.addObject(paddle)
+        
         # Game variables
         run = True
         pause = False
@@ -74,14 +82,12 @@ def main():
 
         # Initialize highscore
         highscore = Highscore(screen)
-
-        loding = Loding(screen)
+		
         # Load scoreboard
         scoreBoard = font.render("Life: " + str(lifes) + " Score: ", True, (255, 0, 0))
-        ##################################################################
-       
+        
         while not gameover:
-
+        
             # Check for quits
             for event in pygame.event.get():
                 
@@ -97,14 +103,15 @@ def main():
                 
                 # Key presses
                 if event.type == KEYDOWN:
-                    if event.key == K_i:
-                        pause = not pause
                     if event.key == K_RIGHT:
-                        a=50
-                        paddle.update2(a)
-                    elif event.key == K_LEFT:    
-                        a=-50
-                        paddle.update2(a)   
+                        paddle.moveRight()
+                            
+                    elif event.key == K_LEFT:
+                        paddle.moveLeft()
+
+                    if event.key == K_i:
+                       pause = not pause    
+                        
                     if event.key == K_SPACE and not(run):
                         run = True
                         gameover = False
@@ -114,44 +121,70 @@ def main():
                         name = ""
                         score = 0
                         pygame.time.set_timer(TIMEEVENT, 15)
-                        
+
+                        paddle.reset()
                         ch.reset()
-                        chitem.reset()
+                        itch1.reset()
+                        itch2.reset()
+                        
                         walls = walls[0:3]
                         for wall in walls:
                             ch.addObject(wall)
-                            chitem.addObject(wall)
+                            itch1.addObject(wall)
+                            itch2.addObject(wall)
+
                         ch.addObject(paddle)
-                        chitem.addObject(paddle)
+                        itch1.addObject(paddle)
+                        itch2.addObject(paddle)
+                        
+                        
                         # Load our balls and add them to collision handler
                         balls = Ball.createRandomBallsAsList(3, screen)
+
+                        greenitems = Greenitem.createRandomItemsAsList1(1, screen)
+
+                        reditems = Reditem.createRandomItemsAsList2(1, screen)
                         
                         for ball in balls:
                             ch.addBall(ball)
 
-                        items=Item.createRandomItemsAsList(1,screen)
+                        for greenitem in greenitems:
+                            itch1.addGreenitem(greenitem)
 
-                        for item in items:
-                            chitem.addItem(item)
+                        for reditem in reditems:
+                            itch2.addReditem(reditem)
+            
             if not pause:
                 # Update positions for balls
-                for ball in balls: 
+                for ball in balls:
                     if ball.update(): # Returns true if ball goes below paddle-level
                         lifes -= 1
 
-                for item in items:
-                    if item.update():
-                        lifes +=1
-            # Update positions for paddle
-            
+                for greenitem in greenitems:
+                    if greenitem.update():
+                        pass
 
+                for reditem in reditems:
+                    if reditem.update():
+                        pass
+            
             # Update collision handler
             if ch.update():
                 score += 1
                 pygame.mixer.Sound.play(Jump_sound)
+
+            if itch1.update():
+                score += 2
+                paddle.bounceGreenItem()
+                pygame.mixer.Sound.play(Jump_sound)
+
+            if itch2.update():
+                score -= 2
+                if score < 0:
+                    score = 0
+                paddle.bounceRedItem()
+                pygame.mixer.Sound.play(Jump_sound)
                 
-            if chitem.update():
-                pygame.mixer.Sound.play(Jump_sound)    
             # Draw background
             screen.fill((0, 0, 0))
             
@@ -160,15 +193,19 @@ def main():
             for wall in walls:
                 wall.draw()
                 
-            # Draw paddle  
+            # Draw paddle
             paddle.draw()    
             
             # Draw balls
             for ball in balls:
                 ball.draw()
 
-            for item in items:
-                item.draw()     
+            # Draw items
+            for greenitem in greenitems:
+                greenitem.draw()
+
+            for reditem in reditems:
+                reditem.draw()
 
             #Draw scoreboard
             if run:
@@ -180,22 +217,23 @@ def main():
             # Level up!
             if time >= screen.get_width():
                 time = 0
-                action = random.randint(0, 2) # Randomize action
+                action = random.randint(0, 1) # Randomize action
                 paddle.levelup()
                 
-                if action == 0 or action == 1:
+                if action == 0:
                     # Add new ball
                     balls.append(ch.addBall(Ball(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
-                elif action == 2:
+                    greenitems.append(itch1.addGreenitem(Greenitem(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
+                    reditems.append(itch2.addReditem(Reditem(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
+                elif action == 1:
                     # Add new wall, vertical or horizontal
-                    
                     if random.randint(0, 1):
                         walls.append(ch.addObject(Wall(screen, (random.randint(50, 550), random.randint(50, 200)), (200,10) )))
-                        items.append(chitem.addItem(Item(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) )))
+                        
                     else:
                         walls.append(ch.addObject(Wall(screen, (random.randint(50, 550), random.randint(50, 200)), (10,200) )))
+                                     
                     # Add bonus item here
-                    
             # If lifes = 0    
             if lifes <= 0 and run:
                 player = []
@@ -221,19 +259,21 @@ def main():
 
                 screen.blit(trans, (screen.get_width()/2-130,80))                                
                 
-                gameOverImg = font2.render("Instructions", True, (255, 0, 0))
-                row1 = font.render("Game starts with 3 balls, keep them in movement for ", True, (255, 0, 0))
-                row2 = font.render("as long as you can.", True, (255,0,0) )
-                row3 = font.render("When the green bar on top of the screen is", True, (255,0,0) )
-                row4 = font.render("full, you either get a new ball or a new wall.", True, (255,0,0) )
-                row5 = font.render("Press i to return to game.", True, (255,0,0) )
+                gameOverImg = font2.render("Instruction", True, (255, 0, 0))
+                row1 = font.render("Game starts with 3 balls, Greenballs, Redballs", True, (255, 0, 0))
+                row2 = font.render("Bounce theses balls as long as you can. ", True, (255,0,0) )
+                row3 = font.render("If timebar is full,Then you either get a new ball or a new wall", True, (255,0,0) )
+                row4 = font.render("Greenballs : score +2, paddle's width + 10", True, (255,0,0))
+                row5 = font.render("Redballs : paddle's width - 20, score -2", True, (255,0,0))
+                row6 = font.render("Press i to return to game.", True, (255,0,0) )
                 
-                screen.blit(gameOverImg, (screen.get_width()/2-120, 70))
-                screen.blit(row1, (screen.get_width()/2-240, 140))
-                screen.blit(row2, (screen.get_width()/2-240, 160))
-                screen.blit(row3, (screen.get_width()/2-240, 200))
-                screen.blit(row4, (screen.get_width()/2-240, 220))
-                screen.blit(row5, (screen.get_width()/2-240, 280))
+                screen.blit(gameOverImg, (screen.get_width()/2-150, 40))
+                screen.blit(row1, (screen.get_width()/2-280, 140))
+                screen.blit(row2, (screen.get_width()/2-280, 170))
+                screen.blit(row3, (screen.get_width()/2-280, 200))
+                screen.blit(row4, (screen.get_width()/2-280, 230))
+                screen.blit(row5, (screen.get_width()/2-280, 260))
+                screen.blit(row6, (screen.get_width()/2-280, 290))
                 
             # Update screen
             pygame.display.flip()

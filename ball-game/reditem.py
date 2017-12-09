@@ -1,11 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-#
-# Multimediaprogrammering i Python ST2010
-# written by Jonatan Jansson, Anders Hassis & Johan Nenzén
-# using Python 2.6.4
-#
-
 import random
 
 import pygame
@@ -17,8 +9,10 @@ def randsign():
     else:
         return -1
         
-class Ball:
-    def __init__(self, surface, (x, y), (vx,vy) ):
+class Reditem:
+    def __init__(self, surface, xxx_todo_changeme, xxx_todo_changeme1 ):
+        (x, y) = xxx_todo_changeme
+        (vx,vy) = xxx_todo_changeme1
         self.surface = surface
         self.x = x
         self.y = y
@@ -29,13 +23,13 @@ class Ball:
         self.active = True
         
     @staticmethod
-    def createRandomBallsAsList(number, screen):
-        balls = []
+    def createRandomItemsAsList2(number, screen):
+        reditems = []
             
         for i in range (0,number):
-            balls.append( Ball(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) ) )
+            reditems.append(Reditem(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) ) )
 
-        return balls
+        return reditems
     
         
     def update(self):
@@ -50,4 +44,4 @@ class Ball:
 
     def draw(self):
         pygame.draw.circle(self.surface, self.color, (int(self.x), int(self.y)), self.radius)
-        
+   

@@ -1,4 +1,3 @@
-
 import random
 
 import pygame
@@ -10,7 +9,7 @@ def randsign():
     else:
         return -1
         
-class Item:
+class Greenitem:
     def __init__(self, surface, xxx_todo_changeme, xxx_todo_changeme1 ):
         (x, y) = xxx_todo_changeme
         (vx,vy) = xxx_todo_changeme1
@@ -19,18 +18,18 @@ class Item:
         self.y = y
         self.vx = vx
         self.vy = vy
-        self.color = 0,255,0
+        self.color = 29, 219, 22
         self.radius = 5
         self.active = True
         
     @staticmethod
-    def createRandomItemsAsList(number, screen):
-        items = []
+    def createRandomItemsAsList1(number, screen):
+        greenitems = []
             
         for i in range (0,number):
-            items.append( Item(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) ) )
+            greenitems.append(Greenitem(screen, (random.randint(50, 550), random.randint(50, 200)), (randsign()*random.uniform(1.0,3.0),random.uniform(1.0,3.0)) ) )
 
-        return items
+        return greenitems
     
         
     def update(self):
@@ -45,4 +44,4 @@ class Item:
 
     def draw(self):
         pygame.draw.circle(self.surface, self.color, (int(self.x), int(self.y)), self.radius)
-        
+   
