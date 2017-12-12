@@ -1,11 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-#
-# Multimediaprogrammering i Python ST2010
-# written by Jonatan Jansson, Anders Hassis & Johan Nenzén
-# using Python 2.6.4
-#
-
 import random
 
 import pygame

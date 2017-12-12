@@ -1,11 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-#
-# Multimediaprogrammering i Python ST2010
-# written by Jonatan Jansson, Anders Hassis & Johan Nenzén
-# using Python 3
-# 
-
 import sqlite3
 import pygame
 from pygame.locals import *
