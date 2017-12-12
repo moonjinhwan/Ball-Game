@@ -14,7 +14,7 @@ class Paddle:
         pygame.draw.rect(self.surface, self.color, (self.x, self.y, self.w, self.h))
 
     def moveRight(self):
-        self.x += 30
+        self.x += 60
         
         if self.x + self.w >= self.surface.get_width()-10:
             self.x = self.surface.get_width() - self.w - 10
@@ -22,7 +22,7 @@ class Paddle:
             self.x = 10
 
     def moveLeft(self):
-        self.x -= 30
+        self.x -= 60
 
         if self.x + self.w >= self.surface.get_width()-10:
             self.x = self.surface.get_width() - self.w - 10
